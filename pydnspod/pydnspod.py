@@ -120,7 +120,7 @@ class User(Api):
 class Domain(Api):
 
     def __init__(self, email="", password="", api_token="", cookie=""):
-        super(User, self).__init__(email, password, api_token, cookie=cookie)
+        super(Domain, self).__init__(email, password, api_token, cookie=cookie)
 
     def create(self, **kw):
         self.path = "Domain.Create"
@@ -250,7 +250,7 @@ class Domain(Api):
 class Record(Api):
 
     def __init__(self, email="", password="", api_token="", cookie=""):
-        super(User, self).__init__(email, password, api_token, cookie=cookie)
+        super(Record, self).__init__(email, password, api_token, cookie=cookie)
 
     def create(self, **kw):
         self.path = "Record.Create"
@@ -288,7 +288,7 @@ class Record(Api):
 class Monitor(Api):
 
     def __init__(self, email="", password="", api_token="", cookie=""):
-        super(User, self).__init__(email, password, api_token, cookie=cookie)
+        super(Monitor, self).__init__(email, password, api_token, cookie=cookie)
 
     def list_subdomain(self, **kw):
         self.path = "Monitor.Listsubdomain"
