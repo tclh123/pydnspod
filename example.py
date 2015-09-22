@@ -94,7 +94,9 @@ if __name__ == "__main__":
     login_email = raw_input()
     print "请输入帐号密码："
     login_password = raw_input()
-    api = pydnspod.Api(login_email, login_password)
+    print "请输入 API TOKEN："
+    api_token = raw_input()
+    api = pydnspod.Api(login_email, login_password, api_token)
     print "请输入D令牌验证码，未开启D令牌请按回车键："
     code = raw_input()
     if code:
@@ -105,7 +107,6 @@ if __name__ == "__main__":
         #print user_manager._cookie
         print user_manager.detail()
     else:
-        api = pydnspod.Api(login_email, login_password)
         print api.version()
-        user_manager = pydnspod.User(login_email, login_password)
+        user_manager = pydnspod.User(login_email, login_password, api_token)
         print user_manager.detail()

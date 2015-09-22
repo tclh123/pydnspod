@@ -10,13 +10,14 @@ from config import DEFAULT_FORMAT, DEFAULT_LANG, LOGIN_REMEMBER
 
 class Api(object):
 
-    def __init__(self, email, password, cookie=''):
+    def __init__(self, email="", password="", api_token="", cookie=""):
         self.base_url = "https://dnsapi.cn/"
         self.path = "Info.Version"
         self.params = {}
         self._cookie = cookie
         self._email = email
         self._password = password
+        self._api_token = api_token
 
     def version(self, **kw):
         self.path = "Info.Version"
@@ -49,6 +50,7 @@ class Api(object):
         self.params.update({
             "login_email": self._email,
             "login_password": self._password,
+            "login_token": self._api_token,
             "format": DEFAULT_FORMAT,
             "lang": DEFAULT_LANG,
             "login_remember": LOGIN_REMEMBER
@@ -87,8 +89,8 @@ class Api(object):
 
 class User(Api):
 
-    def __init__(self, email, password, cookie=''):
-        super(User, self).__init__(email, password, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie=""):
+        super(User, self).__init__(email, password, api_token, cookie=cookie)
 
     def detail(self, **kw):
         self.path = "User.Detail"
@@ -117,8 +119,8 @@ class User(Api):
 
 class Domain(Api):
 
-    def __init__(self, email, password, cookie=''):
-        super(Domain, self).__init__(email, password, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie=""):
+        super(User, self).__init__(email, password, api_token, cookie=cookie)
 
     def create(self, **kw):
         self.path = "Domain.Create"
@@ -247,8 +249,8 @@ class Domain(Api):
 
 class Record(Api):
 
-    def __init__(self, email, password, cookie=''):
-        super(Record, self).__init__(email, password, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie=""):
+        super(User, self).__init__(email, password, api_token, cookie=cookie)
 
     def create(self, **kw):
         self.path = "Record.Create"
@@ -285,8 +287,8 @@ class Record(Api):
 
 class Monitor(Api):
 
-    def __init__(self, email, password, cookie=''):
-        super(Monitor, self).__init__(email, password, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie=""):
+        super(User, self).__init__(email, password, api_token, cookie=cookie)
 
     def list_subdomain(self, **kw):
         self.path = "Monitor.Listsubdomain"
