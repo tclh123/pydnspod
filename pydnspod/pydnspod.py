@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#coding=utf-8
+# coding=utf-8
 
 import urllib
 import urllib2
@@ -10,7 +10,8 @@ from config import DEFAULT_FORMAT, DEFAULT_LANG, LOGIN_REMEMBER
 
 class Api(object):
 
-    def __init__(self, email="", password="", api_token="", cookie=""):
+    def __init__(self, email="", password="", api_token="", cookie="",
+                 timeout=None, retries=None):
         self.base_url = "https://dnsapi.cn/"
         self.path = "Info.Version"
         self.params = {}
@@ -18,6 +19,8 @@ class Api(object):
         self._email = email
         self._password = password
         self._api_token = api_token
+        self.timeout = timeout
+        self.retries = retries
 
     def version(self, **kw):
         self.path = "Info.Version"
@@ -27,7 +30,7 @@ class Api(object):
         path = self.path
         try:
             reqir_params = PARAMS[path]["required"]
-        except:
+        except Exception:
             return False
         for par in reqir_params:
             missing = True
@@ -46,6 +49,22 @@ class Api(object):
                            (par, path, reqir_params)
         return False
 
+    def _request_and_retries(self, url, params, headers, timeout, retries):
+        req = urllib2.Request(url, params, headers)
+        cur = 0
+        cnt = (retries or 0) + 1
+        last_err = None
+        while cur < cnt:
+            cur += 1
+            try:
+                resp = urllib2.urlopen(req, timeout=timeout)
+                response = resp.read()
+                resp_headers = resp.info()
+                return response, resp_headers
+            except Exception as e:
+                last_err = e
+        raise last_err
+
     def _request(self, **kw):
         self.params.update({
             "login_email": self._email,
@@ -61,13 +80,13 @@ class Api(object):
             params = urllib.urlencode(self.params)
             headers = {"User-Agent": USER_AGENT, "Cookie": self._cookie}
             url = "".join((self.base_url, self.path))
-            req = urllib2.Request(url, params, headers)
             try:
-                resp = urllib2.urlopen(req)
-                response = resp.read()
-                resp_headers = resp.info()
-            except Exception, e:
-                return e
+                response, resp_headers = self._request_and_retries(url, params, headers,
+                                                                   timeout=self.timeout,
+                                                                   retries=self.retries)
+            except Exception as e:
+                # return e
+                raise
             return resp_headers if "login_code" in kw and \
                 self.path == "User.Detail" else response
         else:
@@ -89,8 +108,8 @@ class Api(object):
 
 class User(Api):
 
-    def __init__(self, email="", password="", api_token="", cookie=""):
-        super(User, self).__init__(email, password, api_token, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie="", **kw):
+        super(User, self).__init__(email, password, api_token, cookie=cookie, **kw)
 
     def detail(self, **kw):
         self.path = "User.Detail"
@@ -119,8 +138,8 @@ class User(Api):
 
 class Domain(Api):
 
-    def __init__(self, email="", password="", api_token="", cookie=""):
-        super(Domain, self).__init__(email, password, api_token, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie="", **kw):
+        super(Domain, self).__init__(email, password, api_token, cookie=cookie, **kw)
 
     def create(self, **kw):
         self.path = "Domain.Create"
@@ -249,8 +268,8 @@ class Domain(Api):
 
 class Record(Api):
 
-    def __init__(self, email="", password="", api_token="", cookie=""):
-        super(Record, self).__init__(email, password, api_token, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie="", **kw):
+        super(Record, self).__init__(email, password, api_token, cookie=cookie, **kw)
 
     def create(self, **kw):
         self.path = "Record.Create"
@@ -287,8 +306,8 @@ class Record(Api):
 
 class Monitor(Api):
 
-    def __init__(self, email="", password="", api_token="", cookie=""):
-        super(Monitor, self).__init__(email, password, api_token, cookie=cookie)
+    def __init__(self, email="", password="", api_token="", cookie="", **kw):
+        super(Monitor, self).__init__(email, password, api_token, cookie=cookie, **kw)
 
     def list_subdomain(self, **kw):
         self.path = "Monitor.Listsubdomain"
