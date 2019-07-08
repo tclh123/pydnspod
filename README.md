@@ -1,5 +1,7 @@
 # pydnspod
 
+[DNSPod API Docs](https://github.com/DNSPod/dnspod-api-doc/)
+
 #关于
 
 pydnspod是一个DNSPod国内版API的Python SDK.
