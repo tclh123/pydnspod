@@ -1,10 +1,9 @@
 #!/usr/bin/python
-#coding=utf-8
+# coding=utf-8
 
-import sys
-sys.path.append('./pydnspod')
 from distutils.core import setup
 from pydnspod import __version__
+
 
 setup(
     name='pydnspod',
@@ -16,5 +15,6 @@ setup(
     packages=["pydnspod"],
     license="MIT",
     platforms=["any"],
+    install_requires=['six'],
     url='https://github.com/solos/pydnspod'
 )
