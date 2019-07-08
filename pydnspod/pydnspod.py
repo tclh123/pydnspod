@@ -1,11 +1,13 @@
 #!/usr/bin/python
 # coding=utf-8
 
-import urllib
-import urllib2
+from __future__ import absolute_import
+
 import re
-from config import USER_AGENT, PARAMS
-from config import DEFAULT_FORMAT, DEFAULT_LANG, LOGIN_REMEMBER
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.request import Request, urlopen
+from pydnspod.config import USER_AGENT, PARAMS
+from pydnspod.config import DEFAULT_FORMAT, DEFAULT_LANG, LOGIN_REMEMBER
 
 
 class Api(object):
@@ -50,14 +52,14 @@ class Api(object):
         return False
 
     def _request_and_retries(self, url, params, headers, timeout, retries):
-        req = urllib2.Request(url, params, headers)
+        req = Request(url, params, headers)
         cur = 0
         cnt = (retries or 0) + 1
         last_err = None
         while cur < cnt:
             cur += 1
             try:
-                resp = urllib2.urlopen(req, timeout=timeout)
+                resp = urlopen(req, timeout=timeout)
                 response = resp.read()
                 resp_headers = resp.info()
                 return response, resp_headers
@@ -77,15 +79,14 @@ class Api(object):
         self.params.update(kw)
         param_missing = self._is_param_missing(**kw)
         if not param_missing:
-            params = urllib.urlencode(self.params)
+            params = urlencode(self.params).encode()
             headers = {"User-Agent": USER_AGENT, "Cookie": self._cookie}
             url = "".join((self.base_url, self.path))
             try:
                 response, resp_headers = self._request_and_retries(url, params, headers,
                                                                    timeout=self.timeout,
                                                                    retries=self.retries)
-            except Exception as e:
-                # return e
+            except Exception:
                 raise
             return resp_headers if "login_code" in kw and \
                 self.path == "User.Detail" else response
