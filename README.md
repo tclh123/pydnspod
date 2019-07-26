@@ -1,6 +1,6 @@
 # pydnspod
 
-![](https://img.shields.io/pypi/pyversions/sa-tools-core)
+![](https://img.shields.io/pypi/pyversions/pydnspod2)
 
 pydnspod 是一个 DNSPod 国内版 API 的 Python SDK.
 
